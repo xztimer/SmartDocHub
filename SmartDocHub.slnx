@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="SmartDocHub.Domain/SmartDocHub.Domain.csproj" Id="deee8ed6-5c88-400b-8092-39542bab2c0b" />
+  <Project Path="SmartDocHub.Infrastructure/SmartDocHub.Infrastructure.csproj" Id="37148a54-d65e-4e10-b2f4-79da02c02e40" />
+  <Project Path="SmartDocHub.Service/SmartDocHub.Service.csproj" Id="270bc234-023f-48de-85c0-603d7ac4efa3" />
+  <Project Path="SmartDocHub.Web/SmartDocHub.Web.csproj" />
+</Solution>

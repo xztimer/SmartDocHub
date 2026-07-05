@@ -7,7 +7,6 @@ public class User
     public string PasswordHash { get; set; }
     public Gender Gender { get; set; }
     public string NickName { get; set; }
-    public string Email { get; set; }
     public long DeptId { get; set; }
     public UserStatus Status { get; set; }
     public DateTime CreateTime { get; set; } = DateTime.UtcNow;

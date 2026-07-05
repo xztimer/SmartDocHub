@@ -1,5 +1,9 @@
-﻿namespace SmartDocHub.Service.UserApp;
+﻿using SmartDocHub.Domain.UserPermission;
+using SmartDocHub.Service.UserApp.Dto;
+
+namespace SmartDocHub.Service.UserApp;
 
 public interface IUserService
 {
+    Task<User> CheckLogin(LoginDto loginDto);
 }

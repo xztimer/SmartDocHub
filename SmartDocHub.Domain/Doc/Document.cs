@@ -1,5 +1,5 @@
 ﻿namespace SmartDocHub.Domain.Doc;
 
-public class File
+public class Document
 {
 }

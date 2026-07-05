@@ -7,7 +7,7 @@ namespace SmartDocHub.Infrastructure;
 
 public class SmartDocHubDbContext : DbContext
 {
-    public SmartDocHubDbContext(DbContextOptions options) : base(options)
+    public SmartDocHubDbContext(DbContextOptions<SmartDocHubDbContext> options) : base(options)
     {
     }
 
@@ -33,5 +33,11 @@ public class SmartDocHubDbContext : DbContext
         {
             entity.HasMany<RolePermissionMapping>().WithOne().HasForeignKey(x => x.PermissionId).OnDelete(DeleteBehavior.Cascade);
         });
+
+        modelBuilder.Entity<RolePermissionMapping>()
+            .HasKey(rpm => new { rpm.RoleId, rpm.PermissionId });
+
+        modelBuilder.Entity<UserRoleMapping>()
+            .HasKey(t => new { t.UserId, t.RoleId });
     }
 }

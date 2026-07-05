@@ -7,8 +7,13 @@ namespace SmartDocHub.Domain.UserPermission;
 public class Permission
 {
     public long Id { get; set; }
+    public long? ParentId { get; set; }
     public string Name { get; set; }
+    public string Code { get; set; }
     public PermissionType Type { get; set; }
+    public string? Path { get; set; }
+
+    public string ApiMethod { get; set; }
 }
 
 public enum PermissionType
@@ -24,7 +29,7 @@ public enum PermissionType
     Button,
 
     /// <summary>
-    /// API接口
+    /// API
     /// </summary>
     API
 }

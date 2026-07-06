@@ -1,4 +1,4 @@
-﻿namespace SmartDocHub.Domain.Doc;
+﻿namespace SmartDocHub.Domain.AuditLog;
 
 public class SysLog
 {

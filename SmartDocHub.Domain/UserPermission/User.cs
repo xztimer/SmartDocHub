@@ -1,13 +1,13 @@
-﻿namespace SmartDocHub.Domain.UserPermission;
+﻿using Microsoft.AspNetCore.Identity;
 
-public class User
+namespace SmartDocHub.Domain.UserPermission;
+
+public class User : IdentityUser<long>
 {
-    public long Id { get; set; }
-    public string UserName { get; set; }
-    public string PasswordHash { get; set; }
-    public Gender Gender { get; set; }
     public string NickName { get; set; }
-    public long DeptId { get; set; }
+    public long? DeptId { get; set; }
+
+    public string? Remark { get; set; }
     public UserStatus Status { get; set; }
     public DateTime CreateTime { get; set; } = DateTime.UtcNow;
 

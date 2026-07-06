@@ -5,5 +5,4 @@ namespace SmartDocHub.Service.UserApp;
 
 public interface IUserService
 {
-    Task<User> CheckLogin(LoginDto loginDto);
 }

@@ -12,7 +12,6 @@ public class Permission
     public string Code { get; set; }
     public PermissionType Type { get; set; }
     public string? Path { get; set; }
-
     public string ApiMethod { get; set; }
 }
 

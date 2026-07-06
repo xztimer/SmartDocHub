@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 using SmartDocHub.Domain.UserPermission;
 
 namespace SmartDocHub.Infrastructure;
 
-public class SmartDocHubDbContext : DbContext
+public class SmartDocHubDbContext : IdentityDbContext<User, Role, long>
 {
     public SmartDocHubDbContext(DbContextOptions<SmartDocHubDbContext> options) : base(options)
     {
@@ -15,9 +16,6 @@ public class SmartDocHubDbContext : DbContext
     {
     }
 
-    DbSet<User> Users { get; set; }
-    DbSet<Role> Roles { get; set; }
-    DbSet<UserRoleMapping> UserRoles { get; set; }
     DbSet<Permission> Permissions { get; set; }
     DbSet<RolePermissionMapping> RolePermissions { get; set; }
     DbSet<Department> Departments { get; set; }

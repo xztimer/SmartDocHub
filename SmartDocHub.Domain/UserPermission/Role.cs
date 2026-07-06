@@ -1,13 +1,11 @@
-﻿namespace SmartDocHub.Domain.UserPermission;
+﻿using Microsoft.AspNetCore.Identity;
 
-public class Role
+namespace SmartDocHub.Domain.UserPermission;
+
+public class Role:IdentityRole<long>
 {
-    public long Id { get; set; }
-    public string RoleName { get; set; }
-    public string Code { get; set; }
-
     public DataScope DataScope { get; set; }
-    public string Remark { get; set; }
+    public string? Remark { get; set; }
 
     public RoleStatus Status { get; set; }
 }

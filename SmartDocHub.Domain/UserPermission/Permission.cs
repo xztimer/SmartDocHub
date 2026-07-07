@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Permissions;
 using System.Text;
 
 namespace SmartDocHub.Domain.UserPermission;
@@ -13,6 +14,8 @@ public class Permission
     public PermissionType Type { get; set; }
     public string? Path { get; set; }
     public string ApiMethod { get; set; }
+    public PermissionStatus Status { get; set; }
+
 }
 
 public enum PermissionType
@@ -31,4 +34,11 @@ public enum PermissionType
     /// API
     /// </summary>
     API
+}
+
+public enum PermissionStatus
+{
+    Forbidden = 0,
+
+    Normal = 1
 }

@@ -24,6 +24,10 @@ builder.Services.AddControllers(opt =>
 });
 builder.Services.AddMemoryCache();
 
+builder.AddDocDbContext();
+
+builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<SmartDocHubDbContext>().AddDefaultTokenProviders();
+
 
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen(c =>
@@ -49,9 +53,6 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.AddProfile<DocHubProfile>();
 });
 builder.AddJwt();
-builder.AddDocDbContext();
-
-builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<SmartDocHubDbContext>().AddDefaultTokenProviders();
 
 var app = builder.Build();
 
@@ -64,6 +65,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
 app.UseAuthentication();
 
 app.UseAuthorization();

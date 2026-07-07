@@ -1,12 +1,7 @@
 ﻿using AutoMapper;
 
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-
-using SmartDocHub.Domain.UserPermission;
 using SmartDocHub.Infrastructure;
-using SmartDocHub.Service.Exceptions;
-using SmartDocHub.Service.UserApp.Dto;
+using SmartDocHub.Service.Common;
 
 namespace SmartDocHub.Service.UserApp;
 

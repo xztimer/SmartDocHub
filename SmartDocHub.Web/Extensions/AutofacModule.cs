@@ -1,6 +1,6 @@
 ﻿using Autofac;
 
-using SmartDocHub.Service;
+using SmartDocHub.Service.Common;
 
 namespace SmartDocHub.Web.Extensions;
 

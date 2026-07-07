@@ -1,11 +1,19 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace SmartDocHub.Web.Controllers
+using SmartDocHub.Service.RoleApp;
+
+namespace SmartDocHub.Web.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class RoleController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class RoleController : ControllerBase
+    private readonly IRoleService _roleService;
+
+    public RoleController(IRoleService roleService)
     {
+        _roleService = roleService;
     }
+
+
 }

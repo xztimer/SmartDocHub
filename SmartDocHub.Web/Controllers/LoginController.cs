@@ -13,7 +13,7 @@ using System.Text;
 namespace SmartDocHub.Web.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController()]
     public class LoginController : ControllerBase
     {
         private readonly SignInManager<User> _signInManager;

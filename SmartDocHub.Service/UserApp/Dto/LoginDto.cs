@@ -11,4 +11,8 @@ public class LoginDto
     [Required]
     [StringLength(20, MinimumLength = 6)]
     public string Password { get; set; }
+    [Required]
+    public string CodeKey { get; set; }
+    [Required]
+    public string Code { get; set; }
 }

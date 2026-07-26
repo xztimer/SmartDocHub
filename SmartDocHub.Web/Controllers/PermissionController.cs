@@ -7,14 +7,9 @@ namespace SmartDocHub.Web.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class PermissionController : ControllerBase
+public class PermissionController(IPermissionService permissionService) : ControllerBase
 {
-    private readonly IPermissionService _permissionService;
-
-    public PermissionController(IPermissionService permissionService)
-    {
-        _permissionService = permissionService;
-    }
+    private readonly IPermissionService _permissionService = permissionService;
 
     [HttpGet("All")]
     public async Task<IActionResult> GetAll()
@@ -30,10 +25,10 @@ public class PermissionController : ControllerBase
         return Ok(res);
     }
 
-    [HttpPost("Delete")]
-    public IActionResult Delete(long id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(long id)
     {
-        var isSuccess = _permissionService.Delete(id);
+        var isSuccess = await _permissionService.DeleteAsync(id);
         if (isSuccess)
         {
             return Ok("删除成功");
@@ -41,8 +36,8 @@ public class PermissionController : ControllerBase
         return BadRequest("删除失败");
     }
 
-    [HttpPost("Update")]
-    public async Task<IActionResult> UpdateAsync(Permission permission)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(Permission permission)
     {
         var isSuccess = await _permissionService.UpdateAsync(permission);
         if (isSuccess)
@@ -52,8 +47,8 @@ public class PermissionController : ControllerBase
         return BadRequest();
     }
 
-    [HttpPost("Add")]
-    public async Task<IActionResult> AddAsync(Permission permission)
+    [HttpPost]
+    public async Task<IActionResult> Add(Permission permission)
     {
         var res = await _permissionService.AddAsync(permission);
         return Ok(res);

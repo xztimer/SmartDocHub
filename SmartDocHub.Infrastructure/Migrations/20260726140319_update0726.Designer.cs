@@ -12,8 +12,8 @@ using SmartDocHub.Infrastructure;
 namespace SmartHub_KMS.Core.Migrations
 {
     [DbContext(typeof(SmartDocHubDbContext))]
-    [Migration("20260706121301_update07_06_2012")]
-    partial class update07_06_2012
+    [Migration("20260726140319_update0726")]
+    partial class update0726
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -128,6 +128,158 @@ namespace SmartHub_KMS.Core.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("SmartDocHub.Domain.AuditLog.SysLog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("AuditLogType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ErrorMessage")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ExecutionTime")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("IP")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RequestParam")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RequestUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResponseResult")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SysLog");
+                });
+
+            modelBuilder.Entity("SmartDocHub.Domain.Doc.Category", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<long>("ParentId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("SmartDocHub.Domain.Doc.Document", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DepId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UploaderId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Documents");
+                });
+
+            modelBuilder.Entity("SmartDocHub.Domain.Doc.Feedback", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("DocumentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<long?>("ParentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("ReplyToUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Feedbacks");
+                });
+
             modelBuilder.Entity("SmartDocHub.Domain.UserPermission.Department", b =>
                 {
                     b.Property<long>("Id")
@@ -136,14 +288,21 @@ namespace SmartHub_KMS.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("CreateTime")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("Code")
+                        .HasColumnType("text");
 
                     b.Property<string>("DeptName")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long>("ParentId")
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<long?>("ParentId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("Sort")
@@ -152,10 +311,9 @@ namespace SmartHub_KMS.Core.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("UpdateTime")
-                        .HasColumnType("timestamp with time zone");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
 
                     b.ToTable("Departments");
                 });
@@ -186,6 +344,9 @@ namespace SmartHub_KMS.Core.Migrations
                     b.Property<string>("Path")
                         .HasColumnType("text");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
@@ -205,9 +366,6 @@ namespace SmartHub_KMS.Core.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
-
-                    b.Property<int>("DataScope")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
@@ -230,6 +388,19 @@ namespace SmartHub_KMS.Core.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("SmartDocHub.Domain.UserPermission.RoleDepartmentMapping", b =>
+                {
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("DepartmentId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("RoleId", "DepartmentId");
+
+                    b.ToTable("RoleDepartmentMappings");
                 });
 
             modelBuilder.Entity("SmartDocHub.Domain.UserPermission.RolePermissionMapping", b =>
@@ -358,7 +529,7 @@ namespace SmartHub_KMS.Core.Migrations
 
                     b.HasKey("UserId", "RoleId");
 
-                    b.ToTable("UserRoleMapping");
+                    b.ToTable("UserRoleMappings");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
@@ -412,6 +583,15 @@ namespace SmartHub_KMS.Core.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SmartDocHub.Domain.UserPermission.Department", b =>
+                {
+                    b.HasOne("SmartDocHub.Domain.UserPermission.Department", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("SmartDocHub.Domain.UserPermission.RolePermissionMapping", b =>
                 {
                     b.HasOne("SmartDocHub.Domain.UserPermission.Permission", null)
@@ -425,6 +605,11 @@ namespace SmartHub_KMS.Core.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SmartDocHub.Domain.UserPermission.Department", b =>
+                {
+                    b.Navigation("Children");
                 });
 #pragma warning restore 612, 618
         }

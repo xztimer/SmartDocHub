@@ -6,7 +6,6 @@ public class RoleDto
 {
     public long Id { get; set; }
     public string Name { get; set; }
-    public DataScope DataScope { get; set; }
     public RoleStatus Status { get; set; }
 
     public string? Remark { get; set; }

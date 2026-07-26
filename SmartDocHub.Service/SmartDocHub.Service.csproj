@@ -17,8 +17,4 @@
     <ProjectReference Include="..\SmartDocHub.Infrastructure\SmartDocHub.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="PermissionApp\Dto\" />
-  </ItemGroup>
-
 </Project>

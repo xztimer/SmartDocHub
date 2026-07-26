@@ -7,7 +7,11 @@ using Microsoft.OpenApi;
 using SmartDocHub.Domain.UserPermission;
 using SmartDocHub.Infrastructure;
 using SmartDocHub.Service;
+using SmartDocHub.Web.AuditLog;
+using SmartDocHub.Web.Exception;
 using SmartDocHub.Web.Extensions;
+
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,9 +22,12 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
     containerBuilder.RegisterModule(new AutofacModule());
 });
 
+builder.Logging.AddLog4Net();
+
 builder.Services.AddControllers(opt =>
 {
-    //opt.Filters.Add<ExceptionFilter>();
+    opt.Filters.Add<GlobalExceptionFilter>();
+    opt.Filters.Add<AuditLogFilter>();
 });
 builder.Services.AddMemoryCache();
 
@@ -47,12 +54,23 @@ builder.Services.AddSwaggerGen(c =>
         [new OpenApiSecuritySchemeReference("Bearer", document)] = [],
         [new OpenApiSecuritySchemeReference("X-API-Key", document)] = []
     });
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath, true);
 });
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.AddProfile<DocHubProfile>();
 });
 builder.AddJwt();
+builder.Services.AddCors(c =>
+    c.AddPolicy("timer",
+    a => a.WithOrigins("http://localhost:5173".Split(',',
+    StringSplitOptions.RemoveEmptyEntries))
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials())
+);
 
 var app = builder.Build();
 
@@ -64,7 +82,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("timer");
 app.UseRouting();
 app.UseAuthentication();
 

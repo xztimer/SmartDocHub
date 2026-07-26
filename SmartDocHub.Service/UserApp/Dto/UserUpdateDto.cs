@@ -6,6 +6,8 @@ namespace SmartDocHub.Service.UserApp.Dto;
 
 public class UserUpdateDto
 {
+    public long Id { get; set; }
+
     [MaxLength(20)]
     public string NickName { get; set; }
     public long? DeptId { get; set; }
@@ -14,8 +16,7 @@ public class UserUpdateDto
     public string? Remark { get; set; }
     public string Password { get; set; }
 
-    [Required]
-    public List<string> RoleNames { get; set; }
+    public List<string>? RoleNames { get; set; }
 
     [Required]
     public UserStatus Status { get; set; }

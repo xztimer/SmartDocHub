@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
+using SmartDocHub.Domain.AuditLog;
+using SmartDocHub.Domain.Doc;
 using SmartDocHub.Domain.UserPermission;
 
 namespace SmartDocHub.Infrastructure;
@@ -16,9 +18,15 @@ public class SmartDocHubDbContext : IdentityDbContext<User, Role, long>
     {
     }
 
-    DbSet<Permission> Permissions { get; set; }
-    DbSet<RolePermissionMapping> RolePermissions { get; set; }
-    DbSet<Department> Departments { get; set; }
+    public DbSet<Permission> Permissions { get; set; }
+    public DbSet<RolePermissionMapping> RolePermissions { get; set; }
+    public DbSet<Department> Departments { get; set; }
+    public DbSet<UserRoleMapping> UserRoleMappings { get; set; }
+    public DbSet<RoleDepartmentMapping> RoleDepartmentMappings { get; set; }
+    public DbSet<SysLog> SysLog { get; set; }
+    public DbSet<Document> Documents { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Feedback> Feedbacks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -37,5 +45,8 @@ public class SmartDocHubDbContext : IdentityDbContext<User, Role, long>
 
         modelBuilder.Entity<UserRoleMapping>()
             .HasKey(t => new { t.UserId, t.RoleId });
+
+        modelBuilder.Entity<RoleDepartmentMapping>()
+            .HasKey(t => new { t.RoleId, t.DepartmentId });
     }
 }

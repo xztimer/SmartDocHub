@@ -6,17 +6,8 @@ using SmartDocHub.Infrastructure;
 
 namespace SmartDocHub.Service.PermissionApp;
 
-public class PermissionService : IPermissionService
+public class PermissionService(SmartDocHubDbContext dbContext, IMemoryCache memoryCache) : IPermissionService
 {
-    private readonly SmartDocHubDbContext _dbContext;
-    private readonly IMemoryCache _memoryCache;
-
-    public PermissionService(SmartDocHubDbContext dbContext, IMemoryCache memoryCache)
-    {
-        _dbContext = dbContext;
-        _memoryCache = memoryCache;
-    }
-
     public bool HasPermission(long userId, string permissionCode)
     {
         var permissions = GetUserPermissions(userId);
@@ -26,23 +17,22 @@ public class PermissionService : IPermissionService
     public List<string> GetUserPermissions(long userId)
     {
         var cacheKey = $"perm:{userId}";
-
-        var cache = _memoryCache.Get<List<string>>(cacheKey);
+        var cache = memoryCache.Get<List<string>>(cacheKey);
         if (cache != null)
         {
             return cache;
         }
 
-        var roleIds = _dbContext.Set<UserRoleMapping>()
+        var roleIds = dbContext.UserRoleMappings
             .Where(t => t.UserId == userId)
             .Select(t => t.RoleId)
             .ToList();
 
-        var permissionIds = _dbContext.Set<RolePermissionMapping>()
+        var permissionIds = dbContext.RolePermissions
             .Where(t => roleIds.Contains(t.RoleId))
             .Select(t => t.PermissionId)
             .ToList();
-        var perms = _dbContext.Set<Permission>()
+        var perms = dbContext.Permissions
             .Where(t => permissionIds.Contains(t.Id))
             .Select(t => t.Code).Distinct().ToList();
         return perms;
@@ -50,51 +40,45 @@ public class PermissionService : IPermissionService
 
     public async Task<Permission> AddAsync(Permission permission)
     {
-        var isExist = _dbContext.Set<Permission>().Any(t => t.Code == permission.Code);
+        var isExist = dbContext.Set<Permission>().Any(t => t.Code == permission.Code);
         if (isExist)
         {
             return null;
         }
-        _dbContext.Set<Permission>().Add(permission);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Set<Permission>().Add(permission);
+        await dbContext.SaveChangesAsync();
         return permission;
     }
 
-    public bool Delete(long id)
+    public async Task<bool> DeleteAsync(long id)
     {
-        var entity = _dbContext.Set<Permission>().FirstOrDefault(t => t.Id == id);
-        if (entity == null)
-        {
-            return false;
-        }
+        int rowsAffected = await dbContext.Permissions
+            .Where(t => t.Id == id)
+            .ExecuteDeleteAsync();
 
-        _dbContext.Remove(entity);
-
-        return true;
+        return rowsAffected > 0;
     }
-
     public async Task<Permission> GetAsync(long id)
     {
-        var item = await _dbContext.Set<Permission>().FirstOrDefaultAsync(t => t.Id == id);
+        var item = await dbContext.Set<Permission>().FirstOrDefaultAsync(t => t.Id == id);
         return item;
     }
 
     public async Task<List<Permission>> GetAllAsync()
     {
-        var res = await _dbContext.Set<Permission>().ToListAsync();
-
+        var res = await dbContext.Set<Permission>().ToListAsync();
         return res;
     }
 
     public async Task<bool> UpdateAsync(Permission permission)
     {
-        var isExist = await _dbContext.Set<Permission>().AnyAsync(t => t.Id == permission.Id);
+        var isExist = await dbContext.Set<Permission>().AnyAsync(t => t.Id == permission.Id);
         if (!isExist)
         {
             return false;
         }
-        _dbContext.Update(permission);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Update(permission);
+        await dbContext.SaveChangesAsync();
         return true;
     }
 

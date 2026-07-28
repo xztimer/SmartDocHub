@@ -40,10 +40,11 @@ public class AuditLogFilter : IAsyncActionFilter
 
         if (executedContext.Exception != null && !executedContext.ExceptionHandled)
         {
-            var exception = executedContext.Exception;
+            System.Exception? exception = executedContext.Exception;
             sysLog.ErrorMessage = exception.Message.Length > 1024
                 ? exception.Message[..1024]
                 : exception.Message;
+            sysLog.Error = exception.ToString();
 
             sysLog.AuditLogType = AuditLogType.Exception;
 

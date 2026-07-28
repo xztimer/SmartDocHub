@@ -84,6 +84,7 @@ public class AuditLogService : IAuditLogService, IBaseService
                 CreateTime = log.CreateTime,
                 Creator = log.UserId.HasValue && userDic.TryGetValue(log.UserId.Value, out var name) ? name : null,
                 ErrorMessage = log.ErrorMessage,
+                Error = log.Error,
                 ExecutionTime = log.ExecutionTime,
                 Method = log.Method,
                 RequestParam = log.RequestParam

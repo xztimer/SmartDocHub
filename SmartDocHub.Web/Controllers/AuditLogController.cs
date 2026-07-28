@@ -16,14 +16,14 @@ public class AuditLogController(IAuditLogService auditLogService) : ControllerBa
 {
     private readonly IAuditLogService _auditLogService = auditLogService;
 
-   /// <summary>
-   /// 日志列表
-   /// </summary>
-   /// <param name="auditLogPageRequestDto"></param>
-   /// <returns></returns>
+    /// <summary>
+    /// 日志列表
+    /// </summary>
+    /// <param name="auditLogPageRequestDto"></param>
+    /// <returns></returns>
     [HttpGet]
     [AuditLog(IsOpen = false)]
-    public async Task<IActionResult> GetAuditLogList(AuditLogPageRequestDto auditLogPageRequestDto)
+    public async Task<IActionResult> GetAuditLogList([FromQuery] AuditLogPageRequestDto auditLogPageRequestDto)
     {
         var res = await _auditLogService.GetLogAsync(auditLogPageRequestDto);
         return Ok(res);

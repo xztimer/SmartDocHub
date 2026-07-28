@@ -11,6 +11,7 @@ public class SysLog
     public string IP { get; set; }
     public int ExecutionTime { get; set; }
     public string ErrorMessage { get; set; } = string.Empty;
+    public string Error { get; set; } = string.Empty;
     public DateTime CreateTime { get; set; } = DateTime.UtcNow;
     public AuditLogType AuditLogType { get; set; }
 }

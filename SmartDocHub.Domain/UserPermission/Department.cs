@@ -1,4 +1,6 @@
-﻿namespace SmartDocHub.Domain.UserPermission;
+﻿using System.Text.Json.Serialization;
+
+namespace SmartDocHub.Domain.UserPermission;
 
 public class Department
 {
@@ -11,6 +13,7 @@ public class Department
     public DepartmentStatus Status { get; set; }
     public bool IsDeleted { get; set; } = false;
 
+    [JsonIgnore]
     public Department? Parent { get; set; }
     public ICollection<Department> Children { get; set; } = new List<Department>();
 }

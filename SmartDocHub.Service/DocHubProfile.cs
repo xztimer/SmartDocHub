@@ -13,6 +13,7 @@ public class DocHubProfile : Profile
     public DocHubProfile()
     {
         CreateMap<User, UserCreateDto>().ReverseMap();
+        CreateMap<UserUpdateDto, User>().ReverseMap();
         CreateMap<User, UserDto>();
         CreateMap<User, UserAllDto>();
 

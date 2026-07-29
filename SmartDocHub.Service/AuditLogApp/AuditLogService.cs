@@ -41,7 +41,6 @@ public class AuditLogService : IAuditLogService, IBaseService
         int skip = audiLogPageRequestDto.PageSize * (audiLogPageRequestDto.PageIndex - 1);
 
         var query = _dbContext.SysLog.AsQueryable();
-        var total = query.Count();
         if (!string.IsNullOrEmpty(audiLogPageRequestDto.RequestUrl))
         {
             query = query.Where(t => t.RequestUrl.Contains(audiLogPageRequestDto.RequestUrl));
@@ -63,6 +62,7 @@ public class AuditLogService : IAuditLogService, IBaseService
             query = query.Where(x => x.AuditLogType == audiLogPageRequestDto.AuditLogType);
         }
 
+        int total = query.Count();
         var userIdList = await query.Select(t => t.UserId).Distinct().ToListAsync();
         var userDic = await _dbContext.Users
             .Where(t => userIdList.Contains(t.Id))
@@ -81,7 +81,7 @@ public class AuditLogService : IAuditLogService, IBaseService
                 RequestUrl = log.RequestUrl,
                 AuditLogType = log.AuditLogType,
                 IP = log.IP,
-                CreateTime = log.CreateTime,
+                CreateTime = log.CreateTime.ToString("yyyy-MM-dd HH:mm:ss"),
                 Creator = log.UserId.HasValue && userDic.TryGetValue(log.UserId.Value, out var name) ? name : null,
                 ErrorMessage = log.ErrorMessage,
                 Error = log.Error,

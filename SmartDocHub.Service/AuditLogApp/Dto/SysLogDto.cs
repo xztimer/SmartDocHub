@@ -18,6 +18,6 @@ public class SysLogDto
     public int ExecutionTime { get; set; }
     public string ErrorMessage { get; set; } = string.Empty;
     public string Error { get; set; } = string.Empty;
-    public DateTime CreateTime { get; set; } = DateTime.UtcNow;
+    public string CreateTime { get; set; }
     public AuditLogType AuditLogType { get; set; }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SmartDocHub.Infrastructure;
@@ -11,9 +12,11 @@ using SmartDocHub.Infrastructure;
 namespace SmartHub_KMS.Core.Migrations
 {
     [DbContext(typeof(SmartDocHubDbContext))]
-    partial class SmartDocHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260728153457_update_0728_2334")]
+    partial class update_0728_2334
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,20 +102,11 @@ namespace SmartHub_KMS.Core.Migrations
                     b.Property<long>("RoleId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(34)
-                        .HasColumnType("character varying(34)");
-
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserRole<long>");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
@@ -400,6 +394,19 @@ namespace SmartHub_KMS.Core.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
+            modelBuilder.Entity("SmartDocHub.Domain.UserPermission.RoleDepartmentMapping", b =>
+                {
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("DepartmentId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("RoleId", "DepartmentId");
+
+                    b.ToTable("RoleDepartmentMappings");
+                });
+
             modelBuilder.Entity("SmartDocHub.Domain.UserPermission.RolePermissionMapping", b =>
                 {
                     b.Property<long>("RoleId")
@@ -521,9 +528,15 @@ namespace SmartHub_KMS.Core.Migrations
 
             modelBuilder.Entity("SmartDocHub.Domain.UserPermission.UserRoleMapping", b =>
                 {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<long>");
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
 
-                    b.HasDiscriminator().HasValue("UserRoleMapping");
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.ToTable("UserRoleMappings");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>

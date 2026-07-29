@@ -1,7 +1,7 @@
-﻿namespace SmartDocHub.Domain.UserPermission;
+﻿using Microsoft.AspNetCore.Identity;
 
-public class UserRoleMapping
+namespace SmartDocHub.Domain.UserPermission;
+
+public class UserRoleMapping : IdentityUserRole<long>
 {
-    public long RoleId { get; set; }
-    public long UserId { get; set; }
 }

@@ -22,7 +22,6 @@ public class SmartDocHubDbContext : IdentityDbContext<User, Role, long>
     public DbSet<RolePermissionMapping> RolePermissions { get; set; }
     public DbSet<Department> Departments { get; set; }
     public DbSet<UserRoleMapping> UserRoleMappings { get; set; }
-    public DbSet<RoleDepartmentMapping> RoleDepartmentMappings { get; set; }
     public DbSet<SysLog> SysLog { get; set; }
     public DbSet<Document> Documents { get; set; }
     public DbSet<Category> Categories { get; set; }
@@ -31,6 +30,7 @@ public class SmartDocHubDbContext : IdentityDbContext<User, Role, long>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+      
         modelBuilder.Entity<Role>(entity =>
         {
             entity.HasMany<RolePermissionMapping>().WithOne().HasForeignKey(x => x.RoleId).OnDelete(DeleteBehavior.Cascade);
@@ -43,10 +43,5 @@ public class SmartDocHubDbContext : IdentityDbContext<User, Role, long>
         modelBuilder.Entity<RolePermissionMapping>()
             .HasKey(rpm => new { rpm.RoleId, rpm.PermissionId });
 
-        modelBuilder.Entity<UserRoleMapping>()
-            .HasKey(t => new { t.UserId, t.RoleId });
-
-        modelBuilder.Entity<RoleDepartmentMapping>()
-            .HasKey(t => new { t.RoleId, t.DepartmentId });
     }
 }

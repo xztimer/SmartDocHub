@@ -31,21 +31,7 @@ public class UserController(IUserService userService, UserManager<User> userMana
     [HttpGet("List")]
     public async Task<IActionResult> GetList([FromQuery] UserPageRequestDto request)
     {
-        var res = await userService.GetPagedListAsync(request);
-        return Ok(res);
-    }
-
-    /// <summary>
-    /// 查询用户
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    [HttpGet("Get")]
-    public async Task<IActionResult> Get(long id)
-    {
-        var res = await userService.GetAsync(id);
-        if (res == null)
-            return NotFound();
+        UserPageResponseDto? res = await userService.GetPagedListAsync(request);
         return Ok(res);
     }
 

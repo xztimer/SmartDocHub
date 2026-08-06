@@ -1,12 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
 using SmartDocHub.Domain.UserPermission;
 using SmartDocHub.Infrastructure;
+using SmartDocHub.Service.PermissionApp.Dto;
 
 namespace SmartDocHub.Service.PermissionApp;
 
-public class PermissionService(SmartDocHubDbContext dbContext, IMemoryCache memoryCache) : IPermissionService
+public class PermissionService(SmartDocHubDbContext dbContext, IMemoryCache memoryCache, IMapper mapper) : IPermissionService
 {
     public bool HasPermission(long userId, string permissionCode)
     {
@@ -23,7 +26,7 @@ public class PermissionService(SmartDocHubDbContext dbContext, IMemoryCache memo
             return cache;
         }
 
-        var roleIds = dbContext.UserRoleMappings
+        var roleIds = dbContext.UserRoles
             .Where(t => t.UserId == userId)
             .Select(t => t.RoleId)
             .ToList();
@@ -38,41 +41,40 @@ public class PermissionService(SmartDocHubDbContext dbContext, IMemoryCache memo
         return perms;
     }
 
-    public async Task<Permission> AddAsync(Permission permission)
+    public async Task<Permission> AddAsync(PermissionDto dto)
     {
-        var isExist = dbContext.Set<Permission>().Any(t => t.Code == permission.Code);
+        var isExist = await dbContext.Permissions.AnyAsync(t => t.Code == dto.Code);
         if (isExist)
         {
             return null;
         }
-        dbContext.Set<Permission>().Add(permission);
+        var permission = mapper.Map<Permission>(dto);
+        await dbContext.Permissions.AddAsync(permission);
         await dbContext.SaveChangesAsync();
         return permission;
     }
 
     public async Task<bool> DeleteAsync(long id)
     {
-        int rowsAffected = await dbContext.Permissions
-            .Where(t => t.Id == id)
-            .ExecuteDeleteAsync();
-
+        int rowsAffected = await dbContext.Permissions.Where(t => t.Id == id).ExecuteDeleteAsync();
         return rowsAffected > 0;
     }
     public async Task<Permission> GetAsync(long id)
     {
-        var item = await dbContext.Set<Permission>().FirstOrDefaultAsync(t => t.Id == id);
+        var item = await dbContext.Permissions.FirstOrDefaultAsync(t => t.Id == id);
         return item;
     }
 
     public async Task<List<Permission>> GetAllAsync()
     {
-        var res = await dbContext.Set<Permission>().ToListAsync();
+        var res = await dbContext.Permissions
+            .Where(t => t.Status == PermissionStatus.Normal).ToListAsync();
         return res;
     }
 
     public async Task<bool> UpdateAsync(Permission permission)
     {
-        var isExist = await dbContext.Set<Permission>().AnyAsync(t => t.Id == permission.Id);
+        var isExist = await dbContext.Permissions.AnyAsync(t => t.Id == permission.Id);
         if (!isExist)
         {
             return false;

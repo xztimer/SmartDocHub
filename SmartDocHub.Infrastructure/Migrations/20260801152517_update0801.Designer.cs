@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SmartDocHub.Infrastructure;
@@ -11,9 +12,11 @@ using SmartDocHub.Infrastructure;
 namespace SmartHub_KMS.Core.Migrations
 {
     [DbContext(typeof(SmartDocHubDbContext))]
-    partial class SmartDocHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260801152517_update0801")]
+    partial class update0801
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -328,13 +331,11 @@ namespace SmartHub_KMS.Core.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ApiMethod")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Icon")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -401,11 +402,17 @@ namespace SmartHub_KMS.Core.Migrations
                     b.Property<long>("PermissionId")
                         .HasColumnType("bigint");
 
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("LastModificationTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("RoleId", "PermissionId");
 

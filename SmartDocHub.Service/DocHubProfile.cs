@@ -3,6 +3,8 @@ using AutoMapper;
 using SmartDocHub.Domain.AuditLog;
 using SmartDocHub.Domain.UserPermission;
 using SmartDocHub.Service.AuditLogApp.Dto;
+using SmartDocHub.Service.DepartmentApp.Dto;
+using SmartDocHub.Service.PermissionApp.Dto;
 using SmartDocHub.Service.RoleApp.Dto;
 using SmartDocHub.Service.UserApp.Dto;
 
@@ -22,6 +24,8 @@ public class DocHubProfile : Profile
         CreateMap<RoleUpdateDto, Role>();
 
         CreateMap<SysLog, SysLogDto>().ReverseMap();
+        CreateMap<Department,DepartmentDto>().ReverseMap();
+        CreateMap<PermissionDto, Permission>().ReverseMap();
        
     }
 }

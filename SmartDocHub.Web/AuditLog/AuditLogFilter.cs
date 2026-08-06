@@ -20,9 +20,6 @@ public class AuditLogFilter : IAsyncActionFilter
         _logger = logger;
     }
 
-
-
-
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var sw = Stopwatch.StartNew();
@@ -60,7 +57,7 @@ public class AuditLogFilter : IAsyncActionFilter
         }
     }
 
-    private static async Task<SysLog> GenerateRequestLogAsync(ActionExecutingContext context, UserManager<User> userManager)
+    private async Task<SysLog> GenerateRequestLogAsync(ActionExecutingContext context, UserManager<User> userManager)
     {
         var log = new SysLog();
         var httpContext = context.HttpContext;
@@ -86,7 +83,7 @@ public class AuditLogFilter : IAsyncActionFilter
         return log;
     }
 
-    private static string SerializeArguments(IDictionary<string, object?> arguments)
+    private string SerializeArguments(IDictionary<string, object?> arguments)
     {
         if (arguments == null || arguments.Count == 0) return string.Empty;
         var safeArguments = arguments
@@ -98,7 +95,7 @@ public class AuditLogFilter : IAsyncActionFilter
         return JsonSerializer.Serialize(safeArguments);
     }
 
-    private static string GetResponseResultString(IActionResult? result)
+    private string GetResponseResultString(IActionResult? result)
     {
         if (result == null) return string.Empty;
 

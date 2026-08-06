@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SmartDocHub.Infrastructure;
@@ -11,9 +12,11 @@ using SmartDocHub.Infrastructure;
 namespace SmartHub_KMS.Core.Migrations
 {
     [DbContext(typeof(SmartDocHubDbContext))]
-    partial class SmartDocHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260803141422_update0803_2214")]
+    partial class update0803_2214
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

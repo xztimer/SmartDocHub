@@ -21,7 +21,6 @@ public class SmartDocHubDbContext : IdentityDbContext<User, Role, long>
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<RolePermissionMapping> RolePermissions { get; set; }
     public DbSet<Department> Departments { get; set; }
-    public DbSet<UserRoleMapping> UserRoleMappings { get; set; }
     public DbSet<SysLog> SysLog { get; set; }
     public DbSet<Document> Documents { get; set; }
     public DbSet<Category> Categories { get; set; }

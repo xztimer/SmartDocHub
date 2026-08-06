@@ -1,4 +1,6 @@
-﻿namespace SmartDocHub.Service.UserApp.Dto;
+﻿using SmartDocHub.Domain.UserPermission;
+
+namespace SmartDocHub.Service.UserApp.Dto;
 
 public class UserCreateDto
 {
@@ -6,4 +8,5 @@ public class UserCreateDto
     public string Password { get; set; }
     public string NickName { get; set; }
     public string? Remark { get; set; }
+    public UserStatus Status { get; set; }
 }

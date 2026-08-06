@@ -1,4 +1,5 @@
 using SmartDocHub.Domain.UserPermission;
+using SmartDocHub.Service.RoleApp.Dto;
 
 namespace SmartDocHub.Service.UserApp.Dto;
 
@@ -8,7 +9,8 @@ public class UserDto
     public string UserName { get; set; }
     public string NickName { get; set; }
     public UserStatus Status { get; set; }
-    public List<string> RoleNames { get; set; } = new();
+    public List<RoleDto> Roles { get; set; } = new();
+    public string? Remark { get; set; }
     public DateTime CreateTime { get; set; }
     public DateTime? LastLoginTime { get; set; }
     public  DateTime? DisabledTime { get; set; }

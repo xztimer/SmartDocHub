@@ -6,7 +6,7 @@ public class RoleCreateDto
 {
     public string Name { get; set; }
     public string? Remark { get; set; }
-    public List<long>? PermissionIds { get; set; }
+    public RoleStatus Status { get; set; }
 }
 
 public class RoleUpdateDto

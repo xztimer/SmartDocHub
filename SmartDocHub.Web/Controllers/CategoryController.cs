@@ -11,6 +11,7 @@ namespace SmartDocHub.Web.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class CategoryController(SmartDocHubDbContext dbContext) : ControllerBase
 {
     /// <summary>

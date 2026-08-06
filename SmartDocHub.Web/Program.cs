@@ -8,6 +8,7 @@ using SmartDocHub.Domain.UserPermission;
 using SmartDocHub.Infrastructure;
 using SmartDocHub.Service;
 using SmartDocHub.Web.AuditLog;
+using SmartDocHub.Web.Converter;
 using SmartDocHub.Web.Exception;
 using SmartDocHub.Web.Extensions;
 
@@ -26,8 +27,12 @@ builder.Logging.AddLog4Net();
 
 builder.Services.AddControllers(opt =>
 {
+    
     opt.Filters.Add<GlobalExceptionFilter>();
     opt.Filters.Add<AuditLogFilter>();
+}).AddJsonOptions(opt =>
+{
+    opt.JsonSerializerOptions.Converters.Add(new CustomDateTimeConverter());
 });
 builder.Services.AddMemoryCache();
 

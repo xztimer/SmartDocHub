@@ -23,8 +23,7 @@ public class RolePermissionService(SmartDocHubDbContext _dbContext) : IRolePermi
         var newPermissions = permissionIds.Select(id => new RolePermissionMapping
         {
             RoleId = roleId,
-            PermissionId = id,
-            CreateTime = now
+            PermissionId = id
         });
 
         await _dbContext.RolePermissions.AddRangeAsync(newPermissions);

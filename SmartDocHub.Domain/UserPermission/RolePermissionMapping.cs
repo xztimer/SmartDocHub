@@ -1,7 +1,12 @@
-﻿namespace SmartDocHub.Domain.UserPermission;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class RolePermissionMapping : BaseEntity
+namespace SmartDocHub.Domain.UserPermission;
+
+public class RolePermissionMapping
 {
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public long Id { get; set; }
     public long RoleId { get; set; }
     public long PermissionId { get; set; }
 }

@@ -36,16 +36,18 @@ namespace SmartDocHub.Web.Controllers
         {
             if (string.IsNullOrEmpty(loginDto.CodeKey))
             {
-                return StatusCode(StatusCodes.Status501NotImplemented, "验证码错误！");
+                return BadRequest("验证码 Key 不能为空！");
             }
             else
             {
                 var code = memoryCache.Get(loginDto.CodeKey);
                 if (code == null || !loginDto.Code.ToLower().Equals(code.ToString().ToLower()))
                 {
-                    return StatusCode(StatusCodes.Status501NotImplemented, "验证码错误！");
+                    return BadRequest("验证码错误或已过期！");
                 }
             }
+
+            memoryCache.Remove(loginDto.CodeKey);
             var user = await signInManager.UserManager.FindByNameAsync(loginDto.UserName);
             if (user == null)
             {
@@ -56,41 +58,60 @@ namespace SmartDocHub.Web.Controllers
 
             var res = await signInManager.PasswordSignInAsync(user, loginDto.Password, false, false);
 
-            if (res.Succeeded)
-            {
-                var token = GenerateToken(user);
-                return Ok(new { Token = token, Message = "登陆成功" });
-            }
-            else
+            if (!res.Succeeded)
             {
                 var responseResult = new ResponseResultDto();
                 responseResult.SetError("账号或密码错误");
                 return BadRequest(responseResult);
+
             }
 
+            var token = GenerateToken(user);
+            user.LastLoginTime = DateTime.UtcNow;
+            await signInManager.UserManager.UpdateAsync(user);
+            return Ok(new 
+            { 
+                Token = token.accessToken, 
+                RefreshToken = token.refreshToken, 
+                Message = "登陆成功" 
+            });
         }
 
-        private string GenerateToken(User user)
+        private (string accessToken, string refreshToken) GenerateToken(User user)
         {
             var jwtSection = configuration.GetSection("Authentication").GetSection("JwtBearer");
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSection["SecurityKey"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new List<Claim>
+            var accessClaims = new List<Claim>
             {
                 new(ClaimTypes.Name, user.UserName),
                 new(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
-            var token = new JwtSecurityToken(
+            var accessToken = new JwtSecurityToken(
                 issuer: jwtSection["Issuer"],
                 audience: jwtSection["Audience"],
-                claims: claims,
+                claims: accessClaims,
                 expires: DateTime.UtcNow.AddMinutes(20),
                 signingCredentials: credentials
             );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var refreshClaims = new List<Claim>
+            {
+                new(ClaimTypes.Name, user.UserName),
+                new(ClaimTypes.Role, "RefreshToken")
+            };
+
+            var refreshToken = new JwtSecurityToken(
+                issuer: jwtSection["Issuer"],
+                audience: jwtSection["Audience"],
+                claims: refreshClaims,
+                expires: DateTime.UtcNow.AddMinutes(600),
+                signingCredentials: credentials
+            );
+
+            return (new JwtSecurityTokenHandler().WriteToken(accessToken), new JwtSecurityTokenHandler().WriteToken(refreshToken));
         }
 
         /// <summary>
@@ -115,6 +136,10 @@ namespace SmartDocHub.Web.Controllers
 
         }
 
-
+        [HttpPost]
+        public IActionResult RefreshToken()
+        {
+            return Ok();
+        }
     }
 }

@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace SmartDocHub.Web.Exception;
-
+namespace SmartDocHub.Web.Exceptions;
+/// <summary>
+/// 全局异常过滤器
+/// </summary>
+/// <param name="logger"></param>
 public class GlobalExceptionFilter(ILogger<GlobalExceptionFilter> logger) : IExceptionFilter
 {
     public void OnException(ExceptionContext context)

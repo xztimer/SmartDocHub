@@ -20,20 +20,12 @@ public class AuditLogService : IAuditLogService, IBaseService
         _logger = logger;
     }
 
-    public async Task<SysLog> AddAsync(SysLog sysLog)
+    public async Task AddRangeAsync(List<SysLog> sysLogs)
     {
-        try
-        {
-            var res = await _dbContext.SysLog.AddAsync(sysLog);
-            await _dbContext.SaveChangesAsync();
-            return res.Entity;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "保存日志至数据库异常，接口：{0}\r\nMethod：{1}\r\n参数：{2}\r\nIP：{3}\r\n花费时长：{4}",
-                   sysLog.RequestUrl, sysLog.Method, sysLog.RequestParam, sysLog.IP, sysLog.ExecutionTime);
-            return sysLog;
-        }
+        if (sysLogs == null || sysLogs.Count == 0) return;
+
+        await _dbContext.SysLog.AddRangeAsync(sysLogs);
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<AuditLogPageResponseDto> GetLogAsync(AuditLogPageRequestDto audiLogPageRequestDto)

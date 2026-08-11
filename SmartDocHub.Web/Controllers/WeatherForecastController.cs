@@ -2,13 +2,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using SmartDocHub.Web.Auth;
+
 using System.Net;
 
 namespace SmartDocHub.Web.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries =
@@ -17,6 +19,7 @@ namespace SmartDocHub.Web.Controllers
         ];
 
         [HttpGet(Name = "GetWeatherForecast")]
+        [HasPermission("role.test")]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast

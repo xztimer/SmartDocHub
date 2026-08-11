@@ -3,6 +3,7 @@
 using SmartDocHub.Domain.UserPermission;
 using SmartDocHub.Service.PermissionApp;
 using SmartDocHub.Service.PermissionApp.Dto;
+using SmartDocHub.Web.Auth;
 
 namespace SmartDocHub.Web.Controllers;
 
@@ -45,6 +46,7 @@ public class PermissionController(IPermissionService permissionService) : Contro
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("{id}")]
+    [HasPermission("system.permission.delete")]
     public async Task<IActionResult> Delete(long id)
     {
         var isSuccess = await _permissionService.DeleteAsync(id);
@@ -61,6 +63,7 @@ public class PermissionController(IPermissionService permissionService) : Contro
     /// <param name="permission"></param>
     /// <returns></returns>
     [HttpPut("{id}")]
+    [HasPermission("system.permission.edit")]
     public async Task<IActionResult> Update(Permission permission)
     {
         var isSuccess = await _permissionService.UpdateAsync(permission);
@@ -77,6 +80,7 @@ public class PermissionController(IPermissionService permissionService) : Contro
     /// <param name="permission"></param>
     /// <returns></returns>
     [HttpPost]
+    [HasPermission("system.permission.add")]
     public async Task<IActionResult> Add([FromBody]PermissionDto dto)
     {
         var res = await _permissionService.AddAsync(dto);

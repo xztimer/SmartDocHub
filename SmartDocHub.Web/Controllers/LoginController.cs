@@ -23,7 +23,10 @@ namespace SmartDocHub.Web.Controllers
     /// <param name="memoryCache"></param>
     [Route("api/[controller]")]
     [ApiController]
-    public class LoginController(SignInManager<User> signInManager, IConfiguration configuration, IMemoryCache memoryCache) : ControllerBase
+    public class LoginController(SignInManager<User> signInManager,
+        UserManager<User> userManager,
+        IConfiguration configuration, 
+        IMemoryCache memoryCache) : ControllerBase
     {
         /// <summary>
         /// 登录
@@ -34,20 +37,20 @@ namespace SmartDocHub.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            if (string.IsNullOrEmpty(loginDto.CodeKey))
-            {
-                return BadRequest("验证码 Key 不能为空！");
-            }
-            else
-            {
-                var code = memoryCache.Get(loginDto.CodeKey);
-                if (code == null || !loginDto.Code.ToLower().Equals(code.ToString().ToLower()))
-                {
-                    return BadRequest("验证码错误或已过期！");
-                }
-            }
+            //if (string.IsNullOrEmpty(loginDto.CodeKey))
+            //{
+            //    return BadRequest("验证码 Key 不能为空！");
+            //}
+            //else
+            //{
+            //    var code = memoryCache.Get(loginDto.CodeKey);
+            //    if (code == null || !loginDto.Code.ToLower().Equals(code.ToString().ToLower()))
+            //    {
+            //        return BadRequest("验证码错误或已过期！");
+            //    }
+            //}
 
-            memoryCache.Remove(loginDto.CodeKey);
+            //memoryCache.Remove(loginDto.CodeKey);
             var user = await signInManager.UserManager.FindByNameAsync(loginDto.UserName);
             if (user == null)
             {
@@ -66,7 +69,7 @@ namespace SmartDocHub.Web.Controllers
 
             }
 
-            var token = GenerateToken(user);
+            var token = await GenerateToken(user);
             user.LastLoginTime = DateTime.UtcNow;
             await signInManager.UserManager.UpdateAsync(user);
             return Ok(new 
@@ -77,17 +80,22 @@ namespace SmartDocHub.Web.Controllers
             });
         }
 
-        private (string accessToken, string refreshToken) GenerateToken(User user)
+        private async Task<(string accessToken, string refreshToken)> GenerateToken(User user)
         {
             var jwtSection = configuration.GetSection("Authentication").GetSection("JwtBearer");
+            var userRoles = await userManager.GetRolesAsync(user);
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSection["SecurityKey"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var accessClaims = new List<Claim>
             {
                 new(ClaimTypes.Name, user.UserName),
-                new(ClaimTypes.NameIdentifier, user.Id.ToString())
+                new(ClaimTypes.NameIdentifier, user.Id.ToString())                
             };
+            foreach(var role in userRoles)
+            {
+                accessClaims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var accessToken = new JwtSecurityToken(
                 issuer: jwtSection["Issuer"],
@@ -122,7 +130,8 @@ namespace SmartDocHub.Web.Controllers
         [AuditLog(IsOpen = false)]
         public IActionResult Code()
         {
-            var code = CaptchaGenerator.CreateValidCode(4);
+            //var code = CaptchaGenerator.CreateValidCode(4);
+            var code = "1234";
             var buffer = CaptchaGenerator.GenerateCode(code, 100, 30);
 
             var codeKey = Guid.NewGuid().ToString();
@@ -136,7 +145,7 @@ namespace SmartDocHub.Web.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPost("refresh")]
         public IActionResult RefreshToken()
         {
             return Ok();

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using SmartDocHub.Domain.UserPermission;
 using SmartDocHub.Service.UserApp;
 using SmartDocHub.Service.UserApp.Dto;
+using SmartDocHub.Web.Auth;
 using SmartDocHub.Web.Reponse;
 
 using System.Security.Claims;
@@ -41,6 +42,7 @@ public class UserController(IUserService userService, UserManager<User> userMana
     /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPost("Add")]
+    [HasPermission("system.user.add")]
     public async Task<IActionResult> Add([FromBody] UserCreateDto dto)
     {
         var user = mapper.Map<User>(dto);
@@ -69,6 +71,7 @@ public class UserController(IUserService userService, UserManager<User> userMana
     /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPut("{id}")]
+    [HasPermission("system.user.edit")]
     public async Task<IActionResult> Update(long id, [FromBody] UserUpdateDto dto)
     {
         var user = await userManager.FindByIdAsync(id.ToString());
@@ -132,6 +135,7 @@ public class UserController(IUserService userService, UserManager<User> userMana
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("{id}")]
+    [HasPermission("system.user.delete")]
     public async Task<IActionResult> Delete(long id)
     {
         if (id == 1)

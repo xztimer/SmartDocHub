@@ -1,15 +1,18 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi;
 
 using SmartDocHub.Domain.UserPermission;
 using SmartDocHub.Infrastructure;
 using SmartDocHub.Service;
 using SmartDocHub.Web.AuditLog;
+using SmartDocHub.Web.Auth;
 using SmartDocHub.Web.Converter;
-using SmartDocHub.Web.Exception;
+using SmartDocHub.Web.Exceptions;
 using SmartDocHub.Web.Extensions;
 
 using System.Reflection;
@@ -24,22 +27,27 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 });
 
 builder.Logging.AddLog4Net();
-
+builder.Services.AddSingleton<AuditLogQueue>();
+builder.Services.AddHostedService<AuditLogConsumerService>();
 builder.Services.AddControllers(opt =>
 {
-    
     opt.Filters.Add<GlobalExceptionFilter>();
     opt.Filters.Add<AuditLogFilter>();
 }).AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.Converters.Add(new CustomDateTimeConverter());
 });
-builder.Services.AddMemoryCache();
+builder.Services.AddScoped<AuditLogFilter>();
 
 builder.AddDocDbContext();
 
-builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<SmartDocHubDbContext>().AddDefaultTokenProviders();
+builder.Services.AddMemoryCache();
 
+builder.Services.AddIdentity<User, Role>()
+    .AddEntityFrameworkStores<SmartDocHubDbContext>()
+    .AddDefaultTokenProviders();
+builder.Services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicPolicyProvider>());
+builder.Services.AddScoped<IAuthorizationHandler, RbacAuthorizationHandler>();
 
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen(c =>
@@ -70,8 +78,7 @@ builder.Services.AddAutoMapper(cfg =>
 builder.AddJwt();
 builder.Services.AddCors(c =>
     c.AddPolicy("timer",
-    a => a.WithOrigins("http://localhost:5173".Split(',',
-    StringSplitOptions.RemoveEmptyEntries))
+    a => a.WithOrigins("http://localhost:5173")
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials())

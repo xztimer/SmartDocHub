@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SmartDocHub.Domain.UserPermission;
 using SmartDocHub.Infrastructure;
 using SmartDocHub.Service.DepartmentApp.Dto;
+using SmartDocHub.Web.Auth;
 
 namespace SmartDocHub.Web.Controllers;
 
@@ -94,6 +95,8 @@ public class DepartmentController(SmartDocHubDbContext dbContext, IMapper mapper
     /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPost("Add")]
+
+    [HasPermission("system.department.add")]
     public async Task<IActionResult> Create([FromBody] DepartmentCreateDto dto)
     {
         if (dto.ParentId == 0) dto.ParentId = null;
@@ -131,6 +134,7 @@ public class DepartmentController(SmartDocHubDbContext dbContext, IMapper mapper
     /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPost("Update")]
+    [HasPermission("system.department.edit")]
     public async Task<IActionResult> Update([FromBody] DepartmentUpdateDto dto)
     {
         var entity = await dbContext.Departments
@@ -167,6 +171,7 @@ public class DepartmentController(SmartDocHubDbContext dbContext, IMapper mapper
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("Delete")]
+    [HasPermission("system.department.delete")]
     public async Task<IActionResult> Delete([FromQuery] long id)
     {
         var department = await dbContext.Departments

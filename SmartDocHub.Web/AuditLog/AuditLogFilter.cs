@@ -11,22 +11,24 @@ using System.Text.Json;
 
 namespace SmartDocHub.Web.AuditLog;
 
-public class AuditLogFilter : IAsyncActionFilter
+/// <summary>
+/// 日志过滤器
+/// </summary>
+public class AuditLogFilter(ILogger<ExceptionFilterAttribute> logger, AuditLogQueue auditLogQueue) : IAsyncActionFilter
 {
-    private readonly ILogger<ExceptionFilterAttribute> _logger;
 
-    public AuditLogFilter(ILogger<ExceptionFilterAttribute> logger)
-    {
-        _logger = logger;
-    }
-
+    /// <summary>
+    /// 实现方法
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="next"></param>
+    /// <returns></returns>
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var sw = Stopwatch.StartNew();
         var httpContext = context.HttpContext;
 
         var userManager = httpContext.RequestServices.GetRequiredService<UserManager<User>>();
-        var auditLogService = httpContext.RequestServices.GetRequiredService<IAuditLogService>();
         var sysLog = await GenerateRequestLogAsync(context, userManager);
 
         var executedContext = await next();
@@ -45,7 +47,7 @@ public class AuditLogFilter : IAsyncActionFilter
 
             sysLog.AuditLogType = AuditLogType.Exception;
 
-            _logger.LogError(exception, "接口：{Url}\r\nMethod：{Method}\r\n参数：{Param}\r\nIP：{IP}\r\n花费时长：{Time}ms",
+            logger.LogError(exception, "接口：{Url}\r\nMethod：{Method}\r\n参数：{Param}\r\nIP：{IP}\r\n花费时长：{Time}ms",
                 sysLog.RequestUrl, sysLog.Method, sysLog.RequestParam, sysLog.IP, sysLog.ExecutionTime);
         }
         var auditLogAttribute = context.ActionDescriptor.EndpointMetadata
@@ -53,7 +55,7 @@ public class AuditLogFilter : IAsyncActionFilter
             .FirstOrDefault();
         if (auditLogAttribute == null || auditLogAttribute.IsOpen)
         {
-            await auditLogService.AddAsync(sysLog);
+            auditLogQueue.QueueLog(sysLog);
         }
     }
 

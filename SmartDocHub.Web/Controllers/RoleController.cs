@@ -7,6 +7,7 @@ using SmartDocHub.Domain.UserPermission;
 using SmartDocHub.Service.PermissionApp;
 using SmartDocHub.Service.RoleApp;
 using SmartDocHub.Service.RoleApp.Dto;
+using SmartDocHub.Web.Auth;
 using SmartDocHub.Web.Reponse;
 
 namespace SmartDocHub.Web.Controllers;
@@ -43,6 +44,7 @@ public class RoleController(IRoleService roleService,
     /// <param name="roleCreateDto"></param>
     /// <returns></returns>
     [HttpPost]
+    [HasPermission("system.role.add")]
     public async Task<IActionResult> Post([FromBody] RoleCreateDto roleCreateDto)
     {
         var role = mapper.Map<Role>(roleCreateDto);
@@ -68,6 +70,7 @@ public class RoleController(IRoleService roleService,
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("{id}")]
+    [HasPermission("system.role.delete")]
     public async Task<IActionResult> Delete(long id)
     {
         if (id == 1)
@@ -103,6 +106,7 @@ public class RoleController(IRoleService roleService,
     /// <param name="roleUpdateDto"></param>
     /// <returns></returns>
     [HttpPut("{id}")]
+    [HasPermission("system.role.edit")]
     public async Task<IActionResult> Put(long id, [FromBody] RoleUpdateDto roleUpdateDto)
     {
         var role = await roleManager.FindByIdAsync(id.ToString());
@@ -149,6 +153,7 @@ public class RoleController(IRoleService roleService,
     /// <param name="rolePermissionDto"></param>
     /// <returns></returns>
     [HttpPut("{id}/permissions")]
+    [HasPermission("system.rolepermission.edit")]
     public async Task<IActionResult> SavePermissions(long id, [FromBody] RolePermissionDto rolePermissionDto)
     {
         var isSuccess = await rolePermissionService.SavePermissions(id, rolePermissionDto.PermissionIds);

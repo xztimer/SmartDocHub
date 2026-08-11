@@ -5,6 +5,6 @@ namespace SmartDocHub.Service.AuditLogApp;
 
 public interface IAuditLogService
 {
-    Task<SysLog> AddAsync(SysLog sysLog);
+    Task AddRangeAsync(List<SysLog> sysLogs);
     Task<AuditLogPageResponseDto> GetLogAsync(AuditLogPageRequestDto audiLogPageRequestDto);
 }

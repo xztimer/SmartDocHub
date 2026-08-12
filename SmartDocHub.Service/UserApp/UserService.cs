@@ -20,6 +20,10 @@ public class UserService(SmartDocHubDbContext dbContext, IMapper mapper) : IUser
         {
             query = query.Where(t => t.UserName.Contains(request.UserName));
         }
+        if (request.DeptId.HasValue)
+        {
+            query = query.Where(t => t.DeptId == request.DeptId);
+        }
         var total = await query.CountAsync();
 
         var users = await query
@@ -33,10 +37,13 @@ public class UserService(SmartDocHubDbContext dbContext, IMapper mapper) : IUser
             .Where(t => userIds.Contains(t.UserId))
             .Select(t => new { t.UserId, t.RoleId })
             .ToListAsync();
-        var roleIds = userRoleMappings.Select(t=>t.RoleId).Distinct().ToList();
+        var roleIds = userRoleMappings.Select(t => t.RoleId).Distinct().ToList();
         var roles = await dbContext.Roles.Where(t => roleIds.Contains(t.Id)).ToListAsync();
         var roleDtoDict = mapper.Map<List<RoleDto>>(roles).ToDictionary(r => r.Id); ;
-    
+        var deptIds = users.Select(t => t.DeptId).ToList();
+
+
+
         var userRolesDict = userRoleMappings
             .GroupBy(m => m.UserId)
             .ToDictionary(
@@ -55,6 +62,20 @@ public class UserService(SmartDocHubDbContext dbContext, IMapper mapper) : IUser
         : new List<RoleDto>();
             return dto;
         }).ToList();
+        var deptDic = await dbContext.Departments
+            .Where(t => deptIds.Contains(t.Id))
+            .AsNoTracking()
+            .Select(t => new
+            {
+                t.Id,
+                t.DeptName
+            })
+            .ToDictionaryAsync(t => t.Id, t => t.DeptName);
+        foreach (var item in items)
+        {
+            item.DeptName = deptDic.GetValueOrDefault(item.DeptId);
+        }
+
         var userPageResponseDto = new UserPageResponseDto
         {
             Total = total,

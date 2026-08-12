@@ -7,6 +7,8 @@ public class UserDto
 {
     public long Id { get; set; }
     public string UserName { get; set; }
+    public long DeptId { get; set; }
+    public string DeptName { get; set; }
     public string NickName { get; set; }
     public UserStatus Status { get; set; }
     public List<RoleDto> Roles { get; set; } = new();

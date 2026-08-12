@@ -25,6 +25,8 @@ public class DocHubProfile : Profile
 
         CreateMap<SysLog, SysLogDto>().ReverseMap();
         CreateMap<Department,DepartmentDto>().ReverseMap();
+        CreateMap<Department, DepartmentCreateDto>().ReverseMap();
+        CreateMap<Department, DepartmentUpdateDto>().ReverseMap();
         CreateMap<PermissionDto, Permission>().ReverseMap();
        
     }

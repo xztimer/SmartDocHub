@@ -27,8 +27,6 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 });
 
 builder.Logging.AddLog4Net();
-builder.Services.AddSingleton<AuditLogQueue>();
-builder.Services.AddHostedService<AuditLogConsumerService>();
 builder.Services.AddControllers(opt =>
 {
     opt.Filters.Add<GlobalExceptionFilter>();
@@ -37,7 +35,6 @@ builder.Services.AddControllers(opt =>
 {
     opt.JsonSerializerOptions.Converters.Add(new CustomDateTimeConverter());
 });
-builder.Services.AddScoped<AuditLogFilter>();
 
 builder.AddDocDbContext();
 
@@ -46,8 +43,6 @@ builder.Services.AddMemoryCache();
 builder.Services.AddIdentity<User, Role>()
     .AddEntityFrameworkStores<SmartDocHubDbContext>()
     .AddDefaultTokenProviders();
-builder.Services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicPolicyProvider>());
-builder.Services.AddScoped<IAuthorizationHandler, RbacAuthorizationHandler>();
 
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen(c =>
@@ -96,10 +91,15 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("timer");
 app.UseRouting();
+
 app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers(); app.Use(next => context =>
+{
+    context.Request.EnableBuffering();
+    return next(context);
+});
 
 app.Run();

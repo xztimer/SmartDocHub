@@ -8,7 +8,7 @@ public class User : IdentityUser<long>
     public string? Remark { get; set; }
     public UserStatus Status { get; set; }
     public DateTime CreateTime { get; set; } = DateTime.UtcNow;
-    public long? DeptId { get; set; }
+    public long DeptId { get; set; }
     public DateTime? LastLoginTime { get; set; }
 
     public DateTime? UpdateTime { get; set; }

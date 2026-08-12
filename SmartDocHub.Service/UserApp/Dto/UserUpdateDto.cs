@@ -13,6 +13,7 @@ public class UserUpdateDto
     [MaxLength(500)]
     public string? Remark { get; set; }
     public string? Password { get; set; }
+    public long DeptId { get; set; }
 
     public List<string> RoleNames { get; set; }
 

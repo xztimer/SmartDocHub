@@ -58,6 +58,10 @@ namespace SmartDocHub.Web.Controllers
                 responseResult.SetError("账号或密码错误");
                 return BadRequest(responseResult);
             }
+            if (user.IsDeleted)
+            {
+                return BadRequest("该账号不存在");
+            }
 
             var res = await signInManager.PasswordSignInAsync(user, loginDto.Password, false, false);
 

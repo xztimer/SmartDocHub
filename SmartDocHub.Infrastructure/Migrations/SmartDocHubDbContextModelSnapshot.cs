@@ -432,7 +432,7 @@ namespace SmartHub_KMS.Core.Migrations
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long?>("DeptId")
+                    b.Property<long>("DeptId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime?>("DisabledTime")

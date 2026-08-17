@@ -2,7 +2,7 @@
 
 using System.Threading.Channels;
 
-namespace SmartDocHub.Web.AuditLog;
+namespace SmartDocHub.Service.AuditLogApp;
 
 public class AuditLogQueue
 {
@@ -10,7 +10,7 @@ public class AuditLogQueue
     // 创建无界通道
     public AuditLogQueue()
     {
-        _channel = Channel.CreateBounded<SysLog>(new BoundedChannelOptions(100)
+        _channel = Channel.CreateUnbounded<SysLog>(new UnboundedChannelOptions
         {
             SingleReader = true
         });

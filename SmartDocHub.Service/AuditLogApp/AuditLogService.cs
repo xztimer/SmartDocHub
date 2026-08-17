@@ -54,7 +54,7 @@ public class AuditLogService : IAuditLogService, IBaseService
             query = query.Where(x => x.AuditLogType == audiLogPageRequestDto.AuditLogType);
         }
 
-        int total = query.Count();
+        int total = await query.CountAsync();
         var userIdList = await query.Select(t => t.UserId).Distinct().ToListAsync();
         var userDic = await _dbContext.Users
             .Where(t => userIdList.Contains(t.Id))

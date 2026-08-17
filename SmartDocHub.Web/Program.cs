@@ -96,10 +96,6 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllers(); app.Use(next => context =>
-{
-    context.Request.EnableBuffering();
-    return next(context);
-});
+app.MapControllers();
 
 app.Run();

@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Diagnostics;
-
-using SmartDocHub.Domain.AuditLog;
+﻿using SmartDocHub.Domain.AuditLog;
 using SmartDocHub.Service.AuditLogApp;
 
 namespace SmartDocHub.Web.AuditLog;
@@ -19,17 +17,36 @@ public class AuditLogConsumerService(
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var batchList = new List<SysLog>();
+        const int batchSize = 100;
+        var timeout = TimeSpan.FromSeconds(3);
 
-        while (await auditLogQueue.Reader.WaitToReadAsync(stoppingToken))
+        while (!stoppingToken.IsCancellationRequested)
         {
-            while (auditLogQueue.Reader.TryRead(out var sysLog))
+            try
             {
-                batchList.Add(sysLog);
+                using var timeoutCts = new CancellationTokenSource(timeout);
+                using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken, timeoutCts.Token);
+                while (batchList.Count < batchSize)
+                {
+                    if(await auditLogQueue.Reader.WaitToReadAsync(linkedCts.Token))
+                    {
+                        while (batchList.Count < batchSize && auditLogQueue.Reader.TryRead(out var sysLog))
+                        {
+                            batchList.Add(sysLog);
+                        }
+                    }
+                }
+            }
+            catch (OperationCanceledException) when (!stoppingToken.IsCancellationRequested)
+            {
             }
 
             if (batchList.Count > 0)
             {
-                await FlushLogsAsync(batchList);
+                var logsToFlush = batchList.ToList();
+                batchList.Clear();
+
+                await FlushLogsAsync(logsToFlush);
             }
         }
     }
@@ -46,10 +63,6 @@ public class AuditLogConsumerService(
         catch (Exception ex)
         {
             logger.LogError(ex, "异步审计日志写入数据库失败，本次丢失日志数：{Count}", sysLogs.Count);
-        }
-        finally
-        {
-            sysLogs.Clear();
         }
     }
 }

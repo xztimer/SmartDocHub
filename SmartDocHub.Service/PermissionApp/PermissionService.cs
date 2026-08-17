@@ -11,36 +11,6 @@ namespace SmartDocHub.Service.PermissionApp;
 
 public class PermissionService(SmartDocHubDbContext dbContext, IMemoryCache memoryCache, IMapper mapper) : IPermissionService
 {
-    public bool HasPermission(long userId, string permissionCode)
-    {
-        var permissions = GetUserPermissions(userId);
-        return permissions.Contains(permissionCode);
-    }
-
-    public List<string> GetUserPermissions(long userId)
-    {
-        var cacheKey = $"perm:{userId}";
-        var cache = memoryCache.Get<List<string>>(cacheKey);
-        if (cache != null)
-        {
-            return cache;
-        }
-
-        var roleIds = dbContext.UserRoles
-            .Where(t => t.UserId == userId)
-            .Select(t => t.RoleId)
-            .ToList();
-
-        var permissionIds = dbContext.RolePermissions
-            .Where(t => roleIds.Contains(t.RoleId))
-            .Select(t => t.PermissionId)
-            .ToList();
-        var perms = dbContext.Permissions
-            .Where(t => permissionIds.Contains(t.Id))
-            .Select(t => t.Code).Distinct().ToList();
-        return perms;
-    }
-
     public async Task<Permission> AddAsync(PermissionDto dto)
     {
         var isExist = await dbContext.Permissions.AnyAsync(t => t.Code == dto.Code);

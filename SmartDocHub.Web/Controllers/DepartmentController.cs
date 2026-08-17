@@ -80,7 +80,7 @@ public class DepartmentController(IDepartmentService departmentService) : Contro
     /// </summary>
     [HttpDelete("{id}")]
     [HasPermission("system.department.delete")]
-    public async Task<IActionResult> Delete([FromQuery] long id)
+    public async Task<IActionResult> Delete(long id)
     {
         var result = await departmentService.DeleteAsync(id);
         if (!result.IsSuccess)

@@ -37,20 +37,20 @@ namespace SmartDocHub.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            //if (string.IsNullOrEmpty(loginDto.CodeKey))
-            //{
-            //    return BadRequest("验证码 Key 不能为空！");
-            //}
-            //else
-            //{
-            //    var code = memoryCache.Get(loginDto.CodeKey);
-            //    if (code == null || !loginDto.Code.ToLower().Equals(code.ToString().ToLower()))
-            //    {
-            //        return BadRequest("验证码错误或已过期！");
-            //    }
-            //}
+            if (string.IsNullOrEmpty(loginDto.CodeKey))
+            {
+                return BadRequest("验证码 Key 不能为空！");
+            }
+            else
+            {
+                var code = memoryCache.Get(loginDto.CodeKey);
+                if (code == null || !loginDto.Code.ToLower().Equals(code.ToString().ToLower()))
+                {
+                    return BadRequest("验证码错误或已过期！");
+                }
+            }
 
-            //memoryCache.Remove(loginDto.CodeKey);
+            memoryCache.Remove(loginDto.CodeKey);
             var user = await signInManager.UserManager.FindByNameAsync(loginDto.UserName);
             if (user == null)
             {
@@ -134,8 +134,8 @@ namespace SmartDocHub.Web.Controllers
         [AuditLog(IsOpen = false)]
         public IActionResult Code()
         {
-            //var code = CaptchaGenerator.CreateValidCode(4);
-            var code = "1234";
+            var code = CaptchaGenerator.CreateValidCode(4);
+            //var code = "1234";
             var buffer = CaptchaGenerator.GenerateCode(code, 100, 30);
 
             var codeKey = Guid.NewGuid().ToString();

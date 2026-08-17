@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 using SmartDocHub.Domain.UserPermission;
 using SmartDocHub.Infrastructure;
@@ -6,7 +7,7 @@ using SmartDocHub.Service.Common;
 
 namespace SmartDocHub.Service.PermissionApp;
 
-public class RolePermissionService(SmartDocHubDbContext _dbContext) : IRolePermissionService, IBaseService
+public class RolePermissionService(SmartDocHubDbContext _dbContext,IMemoryCache memoryCache) : IRolePermissionService, IBaseService
 {
     public async Task<bool> SavePermissions(long roleId, List<long> permissionIds)
     {
@@ -25,6 +26,8 @@ public class RolePermissionService(SmartDocHubDbContext _dbContext) : IRolePermi
             RoleId = roleId,
             PermissionId = id
         });
+        var roleName = await _dbContext.Roles.FirstOrDefaultAsync(t => t.Id == roleId);
+        memoryCache.Remove($"ROLE_CODES_{roleName}");
 
         await _dbContext.RolePermissions.AddRangeAsync(newPermissions);
 

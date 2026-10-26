@@ -1,0 +1,37 @@
+using AutoMapper;
+
+using SmartDocHub.Domain.AuditLog;
+using SmartDocHub.Domain.Doc;
+using SmartDocHub.Domain.UserPermission;
+using SmartDocHub.Service.AuditLogApp.Dto;
+using SmartDocHub.Service.CategoryApp.Dto;
+using SmartDocHub.Service.DepartmentApp.Dto;
+using SmartDocHub.Service.PermissionApp.Dto;
+using SmartDocHub.Service.RoleApp.Dto;
+using SmartDocHub.Service.UserApp.Dto;
+
+namespace SmartDocHub.Service;
+
+public class DocHubProfile : Profile
+{
+    public DocHubProfile()
+    {
+        CreateMap<User, UserCreateDto>().ReverseMap();
+        CreateMap<UserUpdateDto, User>().ReverseMap();
+        CreateMap<User, UserDto>();
+        CreateMap<User, UserAllDto>();
+
+        CreateMap<Role, RoleDto>().ReverseMap();
+        CreateMap<RoleCreateDto, Role>();
+        CreateMap<RoleUpdateDto, Role>();
+
+        CreateMap<SysLog, SysLogDto>().ReverseMap();
+        CreateMap<Department,DepartmentDto>().ReverseMap();
+        CreateMap<Department, DepartmentCreateDto>().ReverseMap();
+        CreateMap<Department, DepartmentUpdateDto>().ReverseMap();
+        CreateMap<PermissionDto, Permission>().ReverseMap();
+
+        CreateMap<Category, CategoryCreateDto>().ReverseMap();
+       
+    }
+}
